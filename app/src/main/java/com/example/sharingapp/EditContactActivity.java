@@ -7,18 +7,22 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
+import java.util.Observable;
+import java.util.Observer;
+
 /**
  * Editing a pre-existing contact consists of deleting the old contact and adding a new contact with the old
  * contact's id.
  * Note: You will not be able contacts which are "active" borrowers
  */
-public class EditContactActivity extends AppCompatActivity {
+public class EditContactActivity extends AppCompatActivity implements Observer{
 
-    private ContactList contact_list = new ContactList();
+    private ContactListController contact_list_controller = new ContactListController(new ContactList());
     private Contact contact;
     private EditText email;
     private EditText username;
     private Context context;
+    private boolean on_create_update = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +30,7 @@ public class EditContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_contact);
 
         context = getApplicationContext();
-        contact_list.loadContacts(context);
+        contact_list_controller.loadContacts(context);
 
         Intent intent = getIntent();
         int pos = intent.getIntExtra("position", 0);
@@ -38,6 +42,11 @@ public class EditContactActivity extends AppCompatActivity {
 
         username.setText(contact.getUsername());
         email.setText(contact.getEmail());
+
+        on_create_update = true;
+        contact_list_controller.addObserver(this);
+
+        on_create_update = false;
     }
 
     public void saveContact(View view) {
@@ -66,7 +75,7 @@ public class EditContactActivity extends AppCompatActivity {
 
         Contact updated_contact = new Contact(username_str, email_str, id);
         //call the edit command
-        new EditContactCommand(contact_list,contact,updated_contact,context).execute();
+        contact_list_controller.addContact(contact,context);
 
         // End EditContactActivity
         finish();
@@ -75,8 +84,15 @@ public class EditContactActivity extends AppCompatActivity {
     public void deleteContact(View view) {
 
         //delete contact
-        new DeleteContactCommand(contact_list,contact,context).execute();
+        contact_list_controller.deleteContact(contact,context);
         // End EditContactActivity
         finish();
+    }
+
+    @Override
+    public void update(Observable observable, Object o) {
+        if(on_create_update){
+            //update view
+        }
     }
 }
