@@ -3,6 +3,8 @@ package com.example.sharingapp;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 public class ContactListController {
     private ContactList contact_list;
@@ -17,6 +19,10 @@ public class ContactListController {
 
     public ArrayList<Contact> getContacts() {
         return contact_list.getContacts();
+    }
+
+    public Contact getContact(int index){
+        return contact_list.getContact(index);
     }
 
     public boolean addContact(Contact contact, Context context){
@@ -55,5 +61,13 @@ public class ContactListController {
 
     public boolean saveContacts(Context context) {
         return contact_list.saveContacts(context);
+    }
+
+    public void addObserver(Observer observer){
+        contact_list.addObserver(observer);
+    }
+
+    public void removeObserver(Observer observer){
+        contact_list.deleteObserver(observer);
     }
 }

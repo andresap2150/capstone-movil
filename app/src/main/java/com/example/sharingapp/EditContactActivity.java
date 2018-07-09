@@ -7,18 +7,22 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
+import java.util.Observable;
+import java.util.Observer;
+
 /**
  * Editing a pre-existing contact consists of deleting the old contact and adding a new contact with the old
  * contact's id.
  * Note: You will not be able contacts which are "active" borrowers
  */
-public class EditContactActivity extends AppCompatActivity {
+public class EditContactActivity extends AppCompatActivity implements Observer{
 
-    private ContactList contact_list = new ContactList();
-    private Contact contact;
+    private ContactListController contact_list_controller = new ContactListController(new ContactList());
+    private ContactController​ contactController​;
     private EditText email;
     private EditText username;
     private Context context;
+    private boolean on_create_update = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,18 +30,23 @@ public class EditContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_contact);
 
         context = getApplicationContext();
-        contact_list.loadContacts(context);
+        contact_list_controller.loadContacts(context);
 
         Intent intent = getIntent();
         int pos = intent.getIntExtra("position", 0);
 
-        contact = contact_list.getContact(pos);
+        contactController​ = new ContactController​(contact_list_controller.getContact(pos));
 
         username = (EditText) findViewById(R.id.username);
         email = (EditText) findViewById(R.id.email);
 
-        username.setText(contact.getUsername());
-        email.setText(contact.getEmail());
+        username.setText(contactController​.getUsername());
+        email.setText(contactController​.getEmail());
+
+        on_create_update = true;
+        contact_list_controller.addObserver(this);
+
+        on_create_update = false;
     }
 
     public void saveContact(View view) {
@@ -55,18 +64,18 @@ public class EditContactActivity extends AppCompatActivity {
         }
 
         String username_str = username.getText().toString();
-        String id = contact.getId(); // Reuse the contact id
+        String id = contactController​.getId(); // Reuse the contact id
 
         // Check that username is unique AND username is changed (Note: if username was not changed
         // then this should be fine, because it was already unique.)
-        if (!contact_list.isUsernameAvailable(username_str) && !(contact.getUsername().equals(username_str))) {
+        if (!contact_list_controller.isUsernameAvailable(username_str) && !(contactController​.getUsername().equals(username_str))) {
             username.setError("Username already taken!");
             return;
         }
 
-        Contact updated_contact = new Contact(username_str, email_str, id);
+        ContactController​ update_contact_ctr = new ContactController​(new Contact(username_str, email_str, id));
         //call the edit command
-        new EditContactCommand(contact_list,contact,updated_contact,context).execute();
+        contact_list_controller.addContact(contactController​.getContact(),context);
 
         // End EditContactActivity
         finish();
@@ -75,8 +84,16 @@ public class EditContactActivity extends AppCompatActivity {
     public void deleteContact(View view) {
 
         //delete contact
-        new DeleteContactCommand(contact_list,contact,context).execute();
+        contact_list_controller.deleteContact(contactController​.getContact(),context);
+        contact_list_controller.removeObserver(this);
         // End EditContactActivity
         finish();
+    }
+
+    @Override
+    public void update(Observable observable, Object o) {
+        if(on_create_update){
+            //update view
+        }
     }
 }
