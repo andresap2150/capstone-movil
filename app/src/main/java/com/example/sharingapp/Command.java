@@ -22,4 +22,3 @@ public abstract class Command {
         this.is_executed = is_executed;
     }
 }
-

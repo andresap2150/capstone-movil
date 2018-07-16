@@ -27,11 +27,14 @@ public class AddItemActivity extends AppCompatActivity {
     private int REQUEST_CODE = 1;
 
     private ItemList item_list = new ItemList();
+    private ItemListController item_list_controller = new ItemListController(item_list);
+
     private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_add_item);
 
         title = (EditText) findViewById(R.id.title);
@@ -45,10 +48,30 @@ public class AddItemActivity extends AppCompatActivity {
         photo.setImageResource(android.R.drawable.ic_menu_gallery);
 
         context = getApplicationContext();
-        item_list.loadItems(context);
+        item_list_controller.loadItems(context);
     }
 
     public void saveItem (View view) {
+
+        if(!validateInput())
+            return;
+
+        Item item = new Item(title_str, maker_str, description_str, image, null);
+        ItemController item_controller = new ItemController(item);
+        item_controller.setDimensions(length_str, width_str, height_str);
+
+        // Add item
+        boolean success = item_list_controller.addItem(item, context);
+        if (!success) {
+            return;
+        }
+
+        // End AddItemActivity
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    private boolean validateInput() {
 
         String title_str = title.getText().toString();
         String maker_str = maker.getText().toString();
@@ -59,49 +82,35 @@ public class AddItemActivity extends AppCompatActivity {
 
         if (title_str.equals("")) {
             title.setError("Empty field!");
-            return;
+            return false;
         }
 
         if (maker_str.equals("")) {
             maker.setError("Empty field!");
-            return;
+            return false;
         }
 
         if (description_str.equals("")) {
             description.setError("Empty field!");
-            return;
+            return false;
         }
 
         if (length_str.equals("")) {
             length.setError("Empty field!");
-            return;
+            return false;
         }
 
         if (width_str.equals("")) {
             width.setError("Empty field!");
-            return;
+            return false;
         }
 
         if (height_str.equals("")) {
             height.setError("Empty field!");
-            return;
+            return false;
         }
 
-        Item item = new Item(title_str, maker_str, description_str, image, null);
-        item.setDimensions(length_str, width_str, height_str);
-
-        // Add item
-        AddItemCommand add_item_command = new AddItemCommand(item_list, item, context);
-        add_item_command.execute();
-
-        boolean success = add_item_command.isExecuted();
-        if (!success){
-            return;
-        }
-
-        // End AddItemActivity
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        return true;
     }
 
     public void addPhoto(View view) {

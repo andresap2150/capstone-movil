@@ -33,7 +33,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;  // Three pages
+        return 3; // Three pages
     }
 
     @Override

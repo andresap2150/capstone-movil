@@ -1,4 +1,5 @@
 package com.example.sharingapp;
+
 import android.content.Context;
 
 /**
@@ -17,7 +18,8 @@ public class AddItemCommand extends Command{
     }
 
     public void execute(){
+
         item_list.addItem(item);
-        setIsExecuted(item_list.saveItems(context));
+        super.setIsExecuted(item_list.saveItems(context));
     }
 }

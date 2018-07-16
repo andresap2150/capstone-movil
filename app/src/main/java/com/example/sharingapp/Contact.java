@@ -1,12 +1,11 @@
 package com.example.sharingapp;
 
-import java.util.Observable;
 import java.util.UUID;
 
 /**
  * Contact class
  */
-public class Contact extends Observable{
+public class Contact extends Observable {
     private String username;
     private String email;
     private String id;
@@ -50,7 +49,7 @@ public class Contact extends Observable{
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email= email;
         notifyObservers();
     }
 }

@@ -6,6 +6,7 @@ import android.content.Context;
  * Command to delete an item
  */
 public class DeleteItemCommand extends Command {
+
     private ItemList item_list;
     private Item item;
     private Context context;
@@ -18,6 +19,6 @@ public class DeleteItemCommand extends Command {
 
     public void execute() {
         item_list.deleteItem(item);
-        setIsExecuted(item_list.saveItems(context));
+        super.setIsExecuted(item_list.saveItems(context));
     }
 }

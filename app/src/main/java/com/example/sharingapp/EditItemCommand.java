@@ -1,8 +1,9 @@
 package com.example.sharingapp;
+
 import android.content.Context;
 
 /**
- * Command to edit a pre-existing item
+ * Command to edit pre-existing item
  */
 public class EditItemCommand extends Command {
     private ItemList item_list;
@@ -20,6 +21,6 @@ public class EditItemCommand extends Command {
     public void execute() {
         item_list.deleteItem(old_item);
         item_list.addItem(new_item);
-        setIsExecuted(item_list.saveItems(context));
+        super.setIsExecuted(item_list.saveItems(context));
     }
 }

@@ -13,12 +13,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Observable;
 
 /**
  * ContactList class
  */
-public class ContactList extends Observable{
+public class ContactList extends Observable {
 
     private static ArrayList<Contact> contacts;
     private String FILENAME = "contacts.sav";
@@ -38,8 +37,8 @@ public class ContactList extends Observable{
 
     public ArrayList<String> getAllUsernames(){
         ArrayList<String> username_list = new ArrayList<String>();
-        for (Contact u : contacts){
-            username_list.add(u.getUsername());
+        for (Contact c : contacts){
+            username_list.add(c.getUsername());
             }
         return username_list;
     }
@@ -91,15 +90,6 @@ public class ContactList extends Observable{
         return -1;
     }
 
-    public boolean isUsernameAvailable(String username){
-        for (Contact c : contacts) {
-            if (c.getUsername().equals(username)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public void loadContacts(Context context) {
 
         try {
@@ -117,6 +107,10 @@ public class ContactList extends Observable{
         notifyObservers();
     }
 
+    /**
+     * @param context
+     * @return true: if save is successful, false: if save is unsuccessful
+     */
     public boolean saveContacts(Context context) {
         try {
             FileOutputStream fos = context.openFileOutput(FILENAME, 0);
@@ -131,6 +125,15 @@ public class ContactList extends Observable{
         } catch (IOException e) {
             e.printStackTrace();
             return false;
+        }
+        return true;
+    }
+
+    public boolean isUsernameAvailable(String username){
+        for (Contact u : contacts) {
+            if (u.getUsername().equals(username)) {
+                return false;
+            }
         }
         return true;
     }

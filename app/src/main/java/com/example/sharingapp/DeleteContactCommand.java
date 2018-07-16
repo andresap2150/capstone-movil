@@ -2,7 +2,11 @@ package com.example.sharingapp;
 
 import android.content.Context;
 
+/**
+ * Command to delete a contact
+ */
 public class DeleteContactCommand extends Command {
+
     private ContactList contact_list;
     private Contact contact;
     private Context context;
@@ -13,9 +17,8 @@ public class DeleteContactCommand extends Command {
         this.context = context;
     }
 
-    @Override
     public void execute() {
         contact_list.deleteContact(contact);
-        contact_list.saveContacts(context);
+        super.setIsExecuted(contact_list.saveContacts(context));
     }
 }

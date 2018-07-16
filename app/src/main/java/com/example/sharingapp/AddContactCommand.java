@@ -2,6 +2,9 @@ package com.example.sharingapp;
 
 import android.content.Context;
 
+/**
+ * Command to add a contact
+ */
 public class AddContactCommand extends Command {
 
     private ContactList contact_list;
@@ -14,9 +17,8 @@ public class AddContactCommand extends Command {
         this.context = context;
     }
 
-    @Override
     public void execute() {
         contact_list.addContact(contact);
-        setIsExecuted(contact_list.saveContacts(context));
+        super.setIsExecuted(contact_list.saveContacts(context));
     }
 }

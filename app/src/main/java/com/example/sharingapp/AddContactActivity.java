@@ -11,7 +11,9 @@ import android.widget.EditText;
  */
 public class AddContactActivity extends AppCompatActivity {
 
-    private ContactListController contact_list_controller = new ContactListController(new ContactList());
+    private ContactList contact_list = new ContactList();
+    private ContactListController contact_list_controller = new ContactListController(contact_list);
+
     private Context context;
 
     private EditText username;
@@ -31,35 +33,40 @@ public class AddContactActivity extends AppCompatActivity {
 
     public void saveContact(View view) {
 
+        if (!validateInput())
+            return;
+
+        Contact contact = new Contact(username_str, email_str, null);
+
+        // Add contact
+        boolean success = contact_list_controller.addContact(contact, context);
+        if (!success) {
+            return;
+        }
+
+        // End AddContactActivity
+        finish();
+    }
+
+    private boolean validateInput() {
+
         String username_str = username.getText().toString();
         String email_str = email.getText().toString();
 
         if (username_str.equals("")) {
             username.setError("Empty field!");
-            return;
+            return false;
         }
 
-        if (email_str.equals("")) {
-            email.setError("Empty field!");
-            return;
-        }
-
-        if (!email_str.contains("@")){
+        if (!email_str.contains("@")) {
             email.setError("Must be an email address!");
-            return;
+            return false;
         }
 
-        if (!contact_list.isUsernameAvailable(username_str)){
+        if (!contact_list_controller.isUsernameAvailable(username_str)){
             username.setError("Username already taken!");
-            return;
+            return false;
         }
-
-        Contact contact = new Contact(username_str, email_str, null);
-
-        //add contact to the list
-        contact_list_controller.addContact(contact,context);
-
-        // End AddContactActivity
-        finish();
+        return true;
     }
 }
